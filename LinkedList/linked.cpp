@@ -49,16 +49,19 @@ void link::linked_push(int input1) {
 		new_structure->head = newNode;
 	}
 	else {
-		for (int i = 1; i < new_structure->size;i++) {
-			preNode = preNode->next;
-		}
+		
+		preNode = new_structure->tail;
+		
 		preNode->next = newNode;
 		newNode->prev = preNode;
 	}
 
 	new_structure->tail = newNode;
 	new_structure->size++;
-
+	if (new_structure->head != NULL) {
+		new_structure->head->prev = new_structure->tail;
+		new_structure->tail->next = new_structure->head;
+	}
 	return;
 }
 
@@ -73,20 +76,11 @@ link::~link() {
 	delete new_structure;
 }
 
-node_structure* link::init() {
-	new_structure->head = NULL;
-	new_structure->tail = NULL;
-	new_structure->size = 0;
-
-	return new_structure;
-}
-
-
 void link::print() {
 	node* current_Node = new_structure->head;
 
 	for (int i=0; i < new_structure->size;i++) {
-		cout << i << "¹øÂ° ³ëµå °ª : " << current_Node->a << endl;
+		cout << i << "ë²ˆì§¸ ë…¸ë“œ ê°’ : " << current_Node->a << endl;
 		current_Node = current_Node->next;
 	}
 	return;
@@ -96,14 +90,14 @@ void link::reverse_print() {
 	node* current_Node = new_structure->tail;
 
 	for (int i = new_structure->size ; 0 < i;i--) {
-		cout << i-1 << "¹øÂ° ³ëµå °ª : " << current_Node->a << endl;
+		cout << i-1 << "ë²ˆì§¸ ë…¸ë“œ ê°’ : " << current_Node->a << endl;
 		current_Node = current_Node->prev;
 	}
 	return;
 }
 
 void link::new_structure_size() {
-	cout << " ¡ØÇöÀç ¿¬°á ¸®½ºÆ® ³ëµåÀÇ ¼ö¡Ø : " << new_structure->size << endl;
+	cout << " â€»í˜„ìž¬ ì—°ê²° ë¦¬ìŠ¤íŠ¸ ë…¸ë“œì˜ ìˆ˜â€» : " << new_structure->size << endl;
 }
 
 void link::insert(int idx, int num) {
@@ -133,33 +127,43 @@ void link::insert(int idx, int num) {
 
 void link::remove(int idx) {
 	node* curNode = new_structure->head;
-
+	if (idx < 0 || idx >= new_structure->size){
+		cout << " ì§€ìš¸ indexê°€ ì¡´ìž¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤." << endl;
+		return;
+	}
 	for (int i = 1; i <= idx; i++) {
 		curNode = curNode->next;
 	}
 
-	if (new_structure->size - 1 != idx) {
+	if (idx == 0) {
+		if (new_structure->size == 1) {
+			new_structure->head = NULL;
+			new_structure->tail = NULL;
+			new_structure->size--;
+			return;
+		}
+		new_structure->head = curNode->next;
+		new_structure->head->prev = new_structure->tail;
+		new_structure->tail->next = new_structure->head;
+
+		delete curNode;
+	}
+
+	else if (new_structure->size - 1 != idx) {
 		curNode->prev->next = curNode->next;
 		curNode->next->prev = curNode->prev;
 
 		delete curNode;
 	}
 
-	if (new_structure->size - 1 == idx) {
+	else if (new_structure->size - 1 == idx) {
 		new_structure->tail = curNode->prev;
-		curNode->prev->next = nullptr;
+		curNode->prev->next = new_structure->head;
 
 		delete curNode;
 	}
 
-	if (idx == 0) {
-		new_structure->head = curNode->next;
-		curNode->next->prev = nullptr;
-
-		delete curNode;
-	}
 	new_structure->size--;
-
 	return;
 }
 
@@ -167,48 +171,48 @@ int main() {
 	link* linked_list = new link();
 	int input_a,input_b;
 	while (1) {
-		cout << " 1: ÀÔ·Â" << endl;
-		cout << " 2: Áß°£ ÀÔ·Â" << endl;
-		cout << " 3: »èÁ¦ " << endl;
-		cout << " 4: Ãâ·Â " << endl;
-		cout << " 5: ¿ªÃâ·Â" << endl;
-		cout << " 6: ÇÁ·Î±×·¥ Á¾·á " << endl;
+		cout << " 1: ìž…ë ¥" << endl;
+		cout << " 2: ì¤‘ê°„ ìž…ë ¥" << endl;
+		cout << " 3: ì‚­ì œ " << endl;
+		cout << " 4: ì¶œë ¥ " << endl;
+		cout << " 5: ì—­ì¶œë ¥" << endl;
+		cout << " 6: í”„ë¡œê·¸ëž¨ ì¢…ë£Œ " << endl;
 		int l;
-		cout << " »ç¿ë ÇÒ ÇÁ·Î±×·¥ ¹øÈ£ :  ";
+		cout << " ì‚¬ìš© í•  í”„ë¡œê·¸ëž¨ ë²ˆí˜¸ :  ";
 		cin >> l;
 		switch (l) {
 
 
 			int k;
 		case 1:
-			cout << "ÀÔ·ÂÇÒ ¸®½ºÆ®ÀÇ ¼ö : ";
+			cout << "ìž…ë ¥í•  ë¦¬ìŠ¤íŠ¸ì˜ ìˆ˜ : ";
 			cin >> k;
 			for (int i = 0;i < k;i++) {
-				cout << i << "¹øÂ° ³ëµåÀÇ °ª : ";
+				cout << i << "ë²ˆì§¸ ë…¸ë“œì˜ ê°’ : ";
 				cin >> input_a;
 				linked_list->linked_push(input_a);
 			}
-			cout << "ÇöÀç ÀÔ·ÂµÈ °ª : " << endl;;
+			cout << "í˜„ìž¬ ìž…ë ¥ëœ ê°’ : " << endl;;
 			linked_list->print();
 			continue;
 			
 		case 2:
-			cout << " Áß°£ »ðÀÔ ÇÒ ¹øÈ£ : ";
+			cout << " ì¤‘ê°„ ì‚½ìž… í•  ë²ˆí˜¸ : ";
 			cin >> input_a;
 			linked_list->new_structure_size();
-			cout << "»ðÀÔ ÇÒ °ª  : ";
+			cout << "ì‚½ìž… í•  ê°’  : ";
 			cin >> input_b;
 			linked_list->insert(input_a, input_b);
 
-			cout << "ÇöÀç ÀÔ·ÂµÈ °ª : " << endl;;
+			cout << "í˜„ìž¬ ìž…ë ¥ëœ ê°’ : " << endl;;
 			linked_list->print();
 			continue;
 		case 3:
-			cout << "»èÁ¦ÇÒ ¸®½ºÆ® ¹øÈ£ : ";
+			cout << "ì‚­ì œí•  ë¦¬ìŠ¤íŠ¸ ë²ˆí˜¸ : ";
 			cin >> k;
 			linked_list->remove(k);
-			
-			cout << "ÇöÀç ÀÔ·ÂµÈ °ª : " << endl;;
+
+			cout << "í˜„ìž¬ ìž…ë ¥ëœ ê°’ : " << endl;;
 			linked_list->print();
 			continue;
 		case 4:
